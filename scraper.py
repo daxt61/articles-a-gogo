@@ -51,15 +51,18 @@ def generer_article(sujet):
     prompt = (
         f"Rédige un article d'actualité complet en HTML sur le sujet : {sujet}.\n"
         f"Le nom du site est : Articles à Gogo.\n\n"
-        f"Tu dois retourner UNIQUEMENT le contenu HTML de l'article lui-même (le corps), "
-        f"sans les balises <!DOCTYPE html>, <html>, <head> ou <body>.\n\n"
+        f"Tu dois retourner une réponse structurée exactement comme suit :\n"
+        f"[DESCRIPTION] Une meta-description de 150 caractères maximum.\n"
+        f"[KEYWORDS] Liste de 5-10 mots-clés séparés par des virgules.\n"
+        f"[BODY]\n"
+        f"Le contenu HTML de l'article (le corps), sans les balises <!DOCTYPE html>, <html>, <head> ou <body>.\n\n"
         f"L'article doit être structuré avec :\n"
         f"- <h1> pour le titre principal\n"
         f"- Une introduction captivante\n"
         f"- <h2> pour les sections principales\n"
         f"- <p> pour les paragraphes bien fournis\n"
         f"- Écris en français.\n"
-        f"- Ne mets PAS de balises markdown (```html), retourne UNIQUEMENT le HTML brut."
+        f"- Ne mets PAS de balises markdown (```html), retourne UNIQUEMENT le texte brut avec les marqueurs."
     )
     try:
         response = client_gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
@@ -218,14 +221,34 @@ def sauvegarder_et_index():
         nom_f = f"{t.lower().replace(' ', '_')}.html"
         chemin = os.path.join(dossier, nom_f)
         if not os.path.exists(chemin):
-            contenu = generer_article(t)
-            if contenu:
+            reponse = generer_article(t)
+            if reponse:
+                # Parsing simple de la réponse structurée
+                description = "Découvrez notre article sur " + t
+                keywords = t + ", actualités, tendances"
+                corps = reponse
+
+                if "[DESCRIPTION]" in reponse and "[BODY]" in reponse:
+                    try:
+                        parts = reponse.split("[DESCRIPTION]")[1].split("[KEYWORDS]")
+                        description = parts[0].strip()
+                        parts = parts[1].split("[BODY]")
+                        keywords = parts[0].strip()
+                        corps = parts[1].strip()
+                    except:
+                        pass
+
                 html_complet = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{t.title()} - Articles à Gogo</title>
+    <meta name="description" content="{description}">
+    <meta name="keywords" content="{keywords}">
+    <meta property="og:title" content="{t.title()} - Articles à Gogo">
+    <meta property="og:description" content="{description}">
+    <meta property="og:type" content="article">
     <style>
         body {{
             font-family: 'Inter', -apple-system, sans-serif;
@@ -246,7 +269,7 @@ def sauvegarder_et_index():
 <body>
     <a href="../index.html" class="nav-back">← Retour à l'accueil</a>
     <article>
-        {contenu}
+        {corps}
     </article>
     <footer>
         <p>&copy; 2025 Articles à Gogo - Tous droits réservés.</p>
