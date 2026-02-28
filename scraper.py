@@ -180,6 +180,10 @@ def generer_index(dossier, fichiers_articles):
         footer a:hover {{ color: var(--accent); }}
         .no-articles {{ text-align: center; grid-column: 1/-1; padding: 5rem; color: var(--text-dim); }}
     </style>
+    <script>
+        window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
     <header>
@@ -265,6 +269,10 @@ def sauvegarder_et_index():
         .nav-back {{ margin-bottom: 2rem; display: block; color: #e94560; text-decoration: none; font-weight: bold; }}
         footer {{ margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #334155; text-align: center; color: #94a3b8; }}
     </style>
+    <script>
+        window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
     <a href="../index.html" class="nav-back">← Retour à l'accueil</a>
