@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from google import genai
 from selenium import webdriver
@@ -66,10 +67,12 @@ def generer_article(sujet):
         response = client_gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
         html = response.text
         # Nettoyer les éventuelles balises markdown
-        if html.startswith("```html"):
-            html = html[7:]
         if html.startswith("```"):
-            html = html[3:]
+            first_newline = html.find("\n")
+            if first_newline != -1:
+                html = html[first_newline + 1:]
+            else:
+                html = html[3:]
         if html.endswith("```"):
             html = html[:-3]
         return html.strip()
@@ -222,7 +225,7 @@ def sauvegarder_et_index():
 
     tendances = scraper_google_trends()
     for t in tendances:
-        nom_f = f"{t.lower().replace(' ', '_')}.html"
+        nom_f = re.sub(r'[^\w-]', '_', t.lower()) + ".html"
         chemin = os.path.join(dossier, nom_f)
         if not os.path.exists(chemin):
             contenu = generer_article(t)
