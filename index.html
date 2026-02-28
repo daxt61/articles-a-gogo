@@ -1,12 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles à Gogo - Tendances & Actualités</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #e94560;
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 4rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+        header h1 { font-size: 3rem; color: #fff; margin-bottom: 1rem; letter-spacing: -1px; }
+        header p { color: var(--text-dim); font-size: 1.2rem; }
+        nav {
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            padding: 1rem;
+            text-align: center;
+            z-index: 100;
+            border-bottom: 1px solid #334155;
+        }
+        nav a { color: var(--text-main); text-decoration: none; margin: 0 1.5rem; font-weight: 600; transition: 0.3s; }
+        nav a:hover { color: var(--accent); }
+        main { max-width: 1200px; margin: 3rem auto; padding: 0 2rem; }
+        .section-title { font-size: 2rem; margin-bottom: 2.5rem; color: #fff; display: flex; align-items: center; gap: 1rem; }
+        .section-title::after { content: ""; height: 2px; background: var(--accent); flex-grow: 1; }
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .article-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #334155;
+        }
+        .article-card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.3); border-color: var(--accent); }
+        .card-content { padding: 1.5rem; }
+        .article-card h2 { margin-bottom: 1rem; font-size: 1.4rem; }
+        .article-card h2 a { color: #fff; text-decoration: none; transition: 0.2s; }
+        .article-card h2 a:hover { color: var(--accent); }
+        .article-card p { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .lire-suite {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        footer { background: #0b1120; padding: 4rem 1rem; text-align: center; border-top: 1px solid #334155; margin-top: 5rem; }
+        footer a { color: var(--text-dim); text-decoration: none; margin: 0 1rem; transition: 0.3s; }
+        footer a:hover { color: var(--accent); }
+        .no-articles { text-align: center; grid-column: 1/-1; padding: 5rem; color: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Articles à Gogo</h1>
+        <p>Décryptage des tendances & actualités en temps réel</p>
+    </header>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="mon_site_news/faq.html">FAQ</a>
+        <a href="mon_site_news/politique-de-confidentialite.html">Confidentialité</a>
+    </nav>
+    <main>
+        <h2 class="section-title">À la Une aujourd'hui</h2>
+        <div class="article-grid">
+                            <article class="article-card">
+                    <div class="card-content">
+                        <h2><a href="mon_site_news/test_trend_2.html">Test Trend 2</a></h2>
+                        <p>Découvrez notre analyse complète sur les dernières tendances concernant test trend 2.</p>
+                        <a href="mon_site_news/test_trend_2.html" class="lire-suite">Lire la suite &rarr;</a>
+                    </div>
+                </article>
+                <article class="article-card">
+                    <div class="card-content">
+                        <h2><a href="mon_site_news/test_trend_1.html">Test Trend 1</a></h2>
+                        <p>Découvrez notre analyse complète sur les dernières tendances concernant test trend 1.</p>
+                        <a href="mon_site_news/test_trend_1.html" class="lire-suite">Lire la suite &rarr;</a>
+                    </div>
+                </article>
 
-        <html>
-        <head><title>Articles à Gogo</title></head>
-        <body>
-            <h1>📰 Articles à Gogo</h1>
-            <nav><a href="faq.html">FAQ</a> | <a href="politique-de-confidentialite.html">Confidentialité</a></nav>
-            <hr>
-            <h2>Dernières tendances :</h2>
-            <ul><li><a href="mon_site_news/politique-de-confidentialite.html">POLITIQUE-DE-CONFIDENTIALITE</a></li><li><a href="mon_site_news/faq.html">FAQ</a></li></ul>
-        </body>
-        </html>
-        
+        </div>
+    </main>
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Accueil</a>
+            <a href="mon_site_news/faq.html">FAQ</a>
+            <a href="mon_site_news/politique-de-confidentialite.html">Confidentialité</a>
+        </div>
+        <p style="margin-top: 2rem; color: #475569;">&copy; 2025 Articles à Gogo. Propulsé par l'IA.</p>
+    </footer>
+</body>
+</html>
