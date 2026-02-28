@@ -219,24 +219,39 @@ def generer_index(dossier, fichiers_articles):
 
 
 def sauvegarder_et_index():
+    # 1. On garde les articles dans le dossier pour l'organisation
     dossier = "mon_site_news"
-    if not os.path.exists(dossier):
-        os.makedirs(dossier)
-
+    if not os.path.exists(dossier): os.makedirs(dossier)
+    
     tendances = scraper_google_trends()
     for t in tendances:
-        nom_f = re.sub(r'[^\w-]', '_', t.lower()) + ".html"
+        nom_f = f"{t.lower().replace(' ', '_')}.html"
+        # On enregistre l'article dans le dossier
         chemin = os.path.join(dossier, nom_f)
         if not os.path.exists(chemin):
             contenu = generer_article(t)
             if contenu:
                 with open(chemin, "w", encoding="utf-8") as f:
-                    f.write(contenu)
-
-    # Mise à jour de l'index
-    fichiers = [f for f in os.listdir(dossier) if f.endswith('.html') and f not in ('index.html', 'faq.html', 'politique-de-confidentialite.html')]
-    generer_index(dossier, fichiers)
-
+                    f.write(f"<html><head><meta charset='UTF-8'><title>{t}</title></head><body>{contenu}</body></html>")
+    
+    # 2. MISE À JOUR DE L'INDEX À LA RACINE (C'est ici que ça change !)
+    fichiers = [f for f in os.listdir(dossier) if f.endswith('.html') and f != 'index.html']
+    liens = "".join([f'<li><a href="mon_site_news/{f}">{f.replace(".html","").upper()}</a></li>' for f in fichiers])
+    
+    # On écrit le fichier index.html à la RACINE (.) au lieu de (dossier)
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(f"""
+        <html>
+        <head><title>Articles à Gogo</title></head>
+        <body>
+            <h1>📰 Articles à Gogo</h1>
+            <nav><a href="faq.html">FAQ</a> | <a href="politique-de-confidentialite.html">Confidentialité</a></nav>
+            <hr>
+            <h2>Dernières tendances :</h2>
+            <ul>{liens}</ul>
+        </body>
+        </html>
+        """)
 
 if __name__ == "__main__":
     sauvegarder_et_index()
