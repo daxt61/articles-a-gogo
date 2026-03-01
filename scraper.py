@@ -6,6 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 # --- RÉCUPÉRATION DES CLÉS (Secrets Github) ---
@@ -26,21 +28,35 @@ def scraper_google_trends():
 
     try:
         driver.get("https://trends.google.com/trends/trendingsearches/daily?geo=FR&hl=fr")
-        time.sleep(15)
-        lignes = driver.find_element(By.TAG_NAME, "body").text.split('\n')
+        # Attente explicite que les termes de tendances apparaissent
+        try:
+            WebDriverWait(driver, 20).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "span[jsname='K4r5Ff']"))
+            )
+        except:
+            time.sleep(15) # Fallback si l'attente explicite échoue
+
+        elements = driver.find_elements(By.CSS_SELECTOR, "span[jsname='K4r5Ff']")
 
         blacklist = ['trends', 'accueil', 'explorer', 'démarrée', 'volume', 'composition', 'actif', 'il y a', 'heures', 'france']
 
         mots_cles = []
-        for i in range(len(lignes) - 1):
-            ligne = lignes[i].strip()
-            suivante = lignes[i+1].strip()
+        for el in elements:
+            terme = el.text.strip()
+            if terme and 2 < len(terme) < 50 and not any(w in terme.lower() for w in blacklist):
+                if terme not in mots_cles:
+                    mots_cles.append(terme)
 
-            # Heuristique : Un terme de recherche est souvent suivi par son volume (ex: 500 k+, 1 M+)
-            if ("k+" in suivante or "M+" in suivante) and 2 < len(ligne) < 50:
-                if not any(w in ligne.lower() for w in blacklist):
-                    if ligne not in mots_cles:
-                        mots_cles.append(ligne)
+        # Si on n'a rien trouvé avec les sélecteurs, on tente l'heuristique textuelle en dernier recours
+        if not mots_cles:
+            lignes = driver.find_element(By.TAG_NAME, "body").text.split('\n')
+            for i in range(len(lignes) - 1):
+                ligne = lignes[i].strip()
+                suivante = lignes[i+1].strip()
+                if ("k+" in suivante or "M+" in suivante) and 2 < len(ligne) < 50:
+                    if not any(w in ligne.lower() for w in blacklist):
+                        if ligne not in mots_cles:
+                            mots_cles.append(ligne)
 
         return mots_cles[:10]
     finally:
@@ -180,10 +196,6 @@ def generer_index(dossier, fichiers_articles):
         footer a:hover {{ color: var(--accent); }}
         .no-articles {{ text-align: center; grid-column: 1/-1; padding: 5rem; color: var(--text-dim); }}
     </style>
-    <script>
-        window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
     <header>
@@ -269,10 +281,6 @@ def sauvegarder_et_index():
         .nav-back {{ margin-bottom: 2rem; display: block; color: #e94560; text-decoration: none; font-weight: bold; }}
         footer {{ margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #334155; text-align: center; color: #94a3b8; }}
     </style>
-    <script>
-        window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
     <a href="../index.html" class="nav-back">← Retour à l'accueil</a>
